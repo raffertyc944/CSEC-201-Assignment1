@@ -14,6 +14,9 @@ int main() {
     scanf("%s", choice);
 
     if (strcmp(choice, "encrypt") == 0) {
+        //Input was getting stuck on \n
+        getchar();
+
         printf("Enter the string to encrypt: ");
         fgets(message, sizeof(message), stdin);
         message[strcspn(message, "\n")] = '\0'; // Remove newline character

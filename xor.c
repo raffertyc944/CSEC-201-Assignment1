@@ -1,8 +1,14 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void xorEncryptDecrypt(char *data, const char *key, int dataLen) {
     int keyLen = strlen(key);
+
+    if (keyLen == 0) {
+        return;
+    }
+
     for (int i = 0; i <dataLen; ++i) {
         data[i] ^= key[i % keyLen];
     }
@@ -20,10 +26,22 @@ int main() {
         printf("Enter the string to encrypt: ");
         fgets(message, sizeof(message), stdin);
         message[strcspn(message, "\n")] = '\0'; // Remove newline character
+
+        if (strlen(message) == 0) {
+            printf("Error: message cannot be empty.\n");
+            return 1;
+        }
         printf("Enter filename to save encrypted data: ");
-        scanf("%s", filename);
+        fgets(filename, sizeof(filename), stdin);
+        filename[strcspn(filename. "\n")] = '\0';
         printf("Enter the key: ");
-        scanf("%s", key);
+        fgets(key, sizeof(key), stdin);
+        key[strcspn(key, "\n")] = '\0';
+
+        if (strlen(key) == 0) {
+            printf("Error: key cannot be empty.\n");
+            return 1;
+        }
 
         FILE *file = fopen(filename, "wb");
         if (file == NULL) {
@@ -36,10 +54,20 @@ int main() {
         fwrite(message, sizeof(char), messageLen, file);
         fclose(file);
     } else if (strcmp(choice, "decrypt") == 0) {
+        getchar();
+
         printf("Enter filename to read encrypted data: ");
-        scanf("%s", filename);
+        fgets(filename, sizeof(filename), stdin);
+        filename[strcspn(filename, "\n")] = '\0';
+
         printf("Enter the key: ");
-        scanf("%s", key);
+        fgets(key, sizeof(key), stdin);
+        key[strcspn(key, "\n")] = '\0';
+
+        if (strlen(key) == 0) {
+            printf("Error: key cannot be empty.\n");
+            return 1;
+        }
 
         FILE *file = fopen(filename, "rb");
         if (file == NULL) {
@@ -51,6 +79,11 @@ int main() {
         long fileSize = ftell(file);
         fseek(file, 0, SEEK_SET);
 
+        if (fileSize == 0) {
+            printf("Error: file is empty.\n");
+            fclose(file);
+            return 1;
+        }
         char *encryptedData = (char *)malloc((fileSize + 1) * sizeof(char));
         if (encryptedData == NULL) {
             printf("Memory allocation failed.\n");
